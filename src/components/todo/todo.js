@@ -1,27 +1,26 @@
 import React, { useEffect, useState } from 'react';
 import useForm from '../../hooks/form.js';
-
+import { ListContext } from '../../context/listContex';
+import { useContext } from 'react';
 import { v4 as uuid } from 'uuid';
 
 const ToDo = () => {
 
+const context = useContext(ListContext);
+let list = context.list;
+let incomplete = context.list;
+let setList = context.setList;
+let setIncomplete = context.setIncomplete;
+
   const [defaultValues] = useState({
     difficulty: 4,
   });
-  const [list, setList] = useState([]);
-  const [incomplete, setIncomplete] = useState([]);
   const { handleChange, handleSubmit } = useForm(addItem, defaultValues);
 
   function addItem(item) {
     item.id = uuid();
     item.complete = false;
-    console.log(item);
     setList([...list, item]);
-  }
-
-  function deleteItem(id) {
-    const items = list.filter( item => item.id !== id );
-    setList(items);
   }
 
   function toggleComplete(id) {
@@ -32,22 +31,11 @@ const ToDo = () => {
       }
       return item;
     });
-
     setList(items);
-
   }
-
-  useEffect(() => {
-    let incompleteCount = list.filter(item => !item.complete).length;
-    setIncomplete(incompleteCount);
-    document.title = `To Do List: ${incomplete}`;
-  }, [list]);
 
   return (
     <>
-      <header>
-        <h1>To Do List: {incomplete} items pending</h1>
-      </header>
 
       <form onSubmit={handleSubmit}>
 
@@ -72,17 +60,6 @@ const ToDo = () => {
           <button type="submit">Add Item</button>
         </label>
       </form>
-
-      {list.map(item => (
-        <div key={item.id}>
-          <p>{item.text}</p>
-          <p><small>Assigned to: {item.assignee}</small></p>
-          <p><small>Difficulty: {item.difficulty}</small></p>
-          <div onClick={() => toggleComplete(item.id)}>Complete: {item.complete.toString()}</div>
-          <hr />
-        </div>
-      ))}
-
     </>
   );
 };
