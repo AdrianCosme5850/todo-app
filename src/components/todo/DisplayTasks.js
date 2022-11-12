@@ -7,60 +7,83 @@ const DisplayTasks = () => {
     let list = context.list;
     let setList = context.setList;
     let pagination = context.pagination;
-    let [renderedTasks, renderTasks] = useState([])
-    let [index, setIndex] = useState(0);
+    let index = context.index;
+    let setIndex = context.setIndex;
+    let sortA = context.sortA;
+    let showComplete = context.showComplete;
+    let [showButtonLeft, setShowButtonLeft] = useState(true)
+    let [showButtonRight, setShowButtonRight] = useState(true)
 
 function deleteItem(id) {
     const items = list.filter( item => item.id !== id );
     setList(items);
     }
 
-function showTasks(index) {
-    let newArr = [];
-    for(let i = index; i < pagination+index; i++){
-        console.log(i)
-        newArr[newArr.length] = renderedTasks[i];
+    function toggleComplete(id) {
+
+      const items = list.map( item => {
+        if ( item.id == id ) {
+          item.complete = ! item.complete;
+        }
+        return item;
+      });
+      setList(items);
     }
-    console.log(newArr)
-    return newArr;
+
+function showTask(idx){
+    let tasksToShow = [...list];
+    if(!showComplete){
+      tasksToShow = tasksToShow.filter(tasks => tasks.complete === false)
+    }
+    if(sortA){
+      if(sortA === true){
+        tasksToShow.sort((a, b) => {
+          if(a.assignee.toLowerCase() < b.assignee.toLowerCase()){ return -1};
+          if(a.assignee.toLowerCase() > b.assignee.toLowerCase()){ return 1};
+          return 0;
+        })
+      }
+    }
+    console.log(tasksToShow)
+  let task = tasksToShow.slice(idx, idx + pagination);
+  return task.map(item => (
+          <div key={item.id}>
+            <p data-testid="itemDescription">{item.text}</p>
+            <p data-testid="itemAssignee"><small>Assigned to: {item.assignee}</small></p>
+            <p><small>Difficulty: {item.difficulty}</small></p>
+            <div onClick={() => toggleComplete(item.id)}>Complete: {item.complete.toString()}</div>
+            <hr />
+            <Button intent='success' text='Complete Task' onClick={() => toggleComplete(item.id)}></Button>
+            <Button intent='danger' text='X' onClick={() => deleteItem(item.id)}></Button>
+           </div>
+        ))
 }
+useEffect(() => {
+if(index + pagination > list.length){
+  setShowButtonRight(true);
+}
+if(index + pagination < list.length){
+  setShowButtonRight(false)
+  }
+if(index === 0){
+  setShowButtonLeft(true)
+}
+  if(index !== 0){
+    setShowButtonLeft(false)
+  }
+}, [list, index])
 
 function paginationAdd(){
-  if(index + pagination > renderedTasks.length){
-    setIndex(index + pagination)
-  } else {
-    let total = index + pagination;
-    let leftOver = renderedTasks.length - total;
-    setIndex(total - leftOver)
-  }
+  setIndex(index + pagination);
 }
 function paginationSubtract(){
-  if(index - pagination > 0){
-    setIndex(index - pagination)
-  } else {
-    setIndex(0)
-  }
+  setIndex(index - pagination);
 }
 
-useEffect(() => {
-    let tasks = list.map(item => (
-        <div key={item.id}>
-          <p>{item.text}</p>
-          <p><small>Assigned to: {item.assignee}</small></p>
-          <p><small>Difficulty: {item.difficulty}</small></p>
-          <div onClick={() => toggleComplete(item.id)}>Complete: {item.complete.toString()}</div>
-          <hr />
-          <Button intent='success' text='Complete Task'></Button>
-          <Button intent='danger' text='X' onClick={() => deleteItem(item.id)}></Button>
-        </div>
-      ))
-    renderTasks(tasks);
-}, [list])
-
 return(<>
-{showTasks(index)}
-<Button rightIcon='arrow-left' onClick={() => paginationSubtract()}></Button>
-<Button rightIcon='arrow-right' onClick={() => paginationAdd()}></Button>
+{showTask(index)}
+<Button rightIcon='arrow-left' onClick={() => paginationSubtract()} disabled={showButtonLeft}></Button>
+<Button rightIcon='arrow-right' onClick={() => paginationAdd()} disabled={showButtonRight}></Button>
   </>)
 }
 

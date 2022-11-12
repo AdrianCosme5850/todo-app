@@ -23,17 +23,6 @@ let setIncomplete = context.setIncomplete;
     setList([...list, item]);
   }
 
-  function toggleComplete(id) {
-
-    const items = list.map( item => {
-      if ( item.id == id ) {
-        item.complete = ! item.complete;
-      }
-      return item;
-    });
-    setList(items);
-  }
-
   return (
     <>
 
@@ -43,12 +32,12 @@ let setIncomplete = context.setIncomplete;
 
         <label>
           <span>To Do Item</span>
-          <input onChange={handleChange} name="text" type="text" placeholder="Item Details" />
+          <input data-testid="itemInput" onChange={handleChange} name="text" type="text" placeholder="Item Details" />
         </label>
 
         <label>
           <span>Assigned To</span>
-          <input onChange={handleChange} name="assignee" type="text" placeholder="Assignee Name" />
+          <input data-testid="assigneeInput" onChange={handleChange} name="assignee" type="text" placeholder="Assignee Name" />
         </label>
 
         <label>
@@ -57,7 +46,7 @@ let setIncomplete = context.setIncomplete;
         </label>
 
         <label>
-          <button type="submit">Add Item</button>
+          <button data-testid="taskSubmitButton" type="submit">Add Item</button>
         </label>
       </form>
     </>
