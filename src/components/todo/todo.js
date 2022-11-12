@@ -3,6 +3,7 @@ import useForm from '../../hooks/form.js';
 import { ListContext } from '../../context/listContex';
 import { useContext } from 'react';
 import { v4 as uuid } from 'uuid';
+import { AuthContext } from '../../context/authContext';
 
 const ToDo = () => {
 
@@ -11,6 +12,16 @@ let list = context.list;
 let incomplete = context.list;
 let setList = context.setList;
 let setIncomplete = context.setIncomplete;
+const authContext = useContext(AuthContext);
+let capabilities = authContext.capabilities;
+let [write, setWrite] = useState(true);
+
+useEffect(() => {
+if(capabilities.includes('write')){
+  setWrite(false);
+}
+}, [])
+
 
   const [defaultValues] = useState({
     difficulty: 4,
@@ -46,7 +57,7 @@ let setIncomplete = context.setIncomplete;
         </label>
 
         <label>
-          <button data-testid="taskSubmitButton" type="submit">Add Item</button>
+          <button data-testid="taskSubmitButton" type="submit" disabled={write}>Add Item</button>
         </label>
       </form>
     </>

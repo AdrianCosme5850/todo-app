@@ -1,9 +1,11 @@
 import { useContext, useEffect, useState } from 'react';
 import { ListContext } from '../../context/listContex';
 import { Button, Icon } from '@blueprintjs/core';
+import { AuthContext } from '../../context/authContext';
 
 const DisplayTasks = () => {
     const context = useContext(ListContext);
+    const authContext = useContext(AuthContext);
     let list = context.list;
     let setList = context.setList;
     let pagination = context.pagination;
@@ -12,22 +14,24 @@ const DisplayTasks = () => {
     let sortA = context.sortA;
     let showComplete = context.showComplete;
     let [showButtonLeft, setShowButtonLeft] = useState(true)
-    let [showButtonRight, setShowButtonRight] = useState(true)
+    let [showButtonRight, setShowButtonRight] = useState(true);
+    let capabilities = authContext.capabilities;
 
 function deleteItem(id) {
+  if(capabilities.includes('delete')){
     const items = list.filter( item => item.id !== id );
-    setList(items);
+    setList(items);};
     }
 
     function toggleComplete(id) {
-
+      if(capabilities.includes('update')){
       const items = list.map( item => {
         if ( item.id == id ) {
           item.complete = ! item.complete;
         }
         return item;
       });
-      setList(items);
+      setList(items);}
     }
 
 function showTask(idx){
