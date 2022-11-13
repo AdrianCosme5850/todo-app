@@ -20,7 +20,7 @@ class DataCollection {
   }
 
   create(record) {
-    return this.model.create(record);
+  return this.model.create(record);
   }
 
   update(id, data) {

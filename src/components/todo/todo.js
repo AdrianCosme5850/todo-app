@@ -30,7 +30,7 @@ if(capabilities.includes('write')){
   const { handleChange, handleSubmit } = useForm(addItem, defaultValues);
 
   function addItem(item) {
-    item.id = uuid();
+    item.itemId = uuid();
     item.complete = false;
     setList([...list, item]);
   }

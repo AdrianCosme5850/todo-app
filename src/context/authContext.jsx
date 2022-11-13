@@ -2,7 +2,7 @@ import React from 'react';
 import cookie from 'react-cookies';
 import jwt_decode from 'jwt-decode';
 import { useState, createContext, useEffect} from 'react';
-import * as dotenv from 'dotenv'
+import axios from 'axios';
 import base64 from 'base-64';
 
 export const AuthContext = createContext();
@@ -66,19 +66,17 @@ try {      let object = JSON.stringify({
       try {
         let encodedCredentials = base64.encode(username + ':' + password)
         console.log(encodedCredentials)
-        let user = await fetch('http://localhost:3001/signin', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Basic ' + encodedCredentials
-        },
-      })
-      let parsedUser = user.json();
-      console.log(parsedUser)
-      cookie.save('auth', parsedUser);
+        let config = {
+          headers:{
+            'Authorization': 'Basic ' + encodedCredentials
+          }
+        }
+      let user = await axios.post('http://localhost:3001/signin',{}, config);
+      console.log(user.data)
+      cookie.save('auth', user.data.token);
       setLoggedIn(true)
-      setCapabilities(parsedUser.capabilities)
-      setToken(parsedUser.token)
+      setCapabilities(user.data.user.capabilities)
+      setToken(user.data.token)
       } catch(e){
         console.log(e);
             }
@@ -106,7 +104,6 @@ try {      let object = JSON.stringify({
 
       useEffect(() => {
         // const cookieToken = cookie.load('auth');
-        // console.log(cookieToken)
         // validateToken(cookieToken.token);
       }, [])
 

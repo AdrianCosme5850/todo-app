@@ -1,5 +1,6 @@
 import { useState, useEffect, useContext } from 'react';
 import { AuthContext } from '../context/authContext';
+import axios from 'axios';
 
 const useForm = (callback, defaultValues={}) => {
 
@@ -14,17 +15,9 @@ const useForm = (callback, defaultValues={}) => {
     console.log(process.env.REACT_APP_SERVER)
     let url = 'http://localhost:3001/api/v1/tasks'
     values.complete = false;
-    let jsonValues = JSON.stringify(values)
-    console.log(jsonValues)
-    let taskResponse = await fetch(url, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: jsonValues,
-    })
-    console.log(taskResponse)
-    callback(values);
+    let taskResponse = await axios.post(url, values)
+    console.log(taskResponse.data)
+    callback(taskResponse.data);
   };
 
   const handleChange = (event) => {
