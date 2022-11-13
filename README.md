@@ -19,3 +19,5 @@ Implemented a settings drop down that controls pagination, alphabetical order so
 ## Approach  
 
 Added a auth context that prevents people from access the to do list without first logging in. Once they are logged in they can only read, write, update, and delete based on the role that they are assigned. User's token is saved as a cookie and verified on page reload. I'm still having trouble with the testing. I'll be asking for help on it when we come back on Monday.
+
+Live Deploy: https://effervescent-pie-db0eab.netlify.app/
