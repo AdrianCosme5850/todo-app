@@ -16,6 +16,7 @@ const authContext = useContext(AuthContext);
 let capabilities = authContext.capabilities;
 let [write, setWrite] = useState(true);
 
+
 useEffect(() => {
 if(capabilities.includes('write')){
   setWrite(false);
@@ -29,7 +30,7 @@ if(capabilities.includes('write')){
   const { handleChange, handleSubmit } = useForm(addItem, defaultValues);
 
   function addItem(item) {
-    item.id = uuid();
+    item.itemId = uuid();
     item.complete = false;
     setList([...list, item]);
   }
@@ -57,7 +58,7 @@ if(capabilities.includes('write')){
         </label>
 
         <label>
-          <button data-testid="taskSubmitButton" type="submit" disabled={write}>Add Item</button>
+          <button data-testid="taskSubmitButton" type="submit" >Add Item</button>
         </label>
       </form>
     </>

@@ -2,6 +2,7 @@ import { useContext, useEffect, useState } from 'react';
 import { ListContext } from '../../context/listContex';
 import { Button, Icon } from '@blueprintjs/core';
 import { AuthContext } from '../../context/authContext';
+import axios from 'axios';
 
 const DisplayTasks = () => {
     const context = useContext(ListContext);
@@ -18,20 +19,20 @@ const DisplayTasks = () => {
     let capabilities = authContext.capabilities;
 
 function deleteItem(id) {
-  if(capabilities.includes('delete')){
     const items = list.filter( item => item.id !== id );
-    setList(items);};
-    }
+    setList(items);
+    axios.delete("http://localhost:3001/api/v1/tasks/" + id)
+    };
 
-    function toggleComplete(id) {
-      if(capabilities.includes('update')){
+    function toggleComplete(item) {
       const items = list.map( item => {
-        if ( item.id == id ) {
+        if ( item.id == [item.id] ) {
           item.complete = ! item.complete;
         }
         return item;
       });
-      setList(items);}
+      setList(items);
+      axios.put("http://localhost:3001/api/v1/tasks/" + item.id, item)
     }
 
 function showTask(idx){
@@ -48,7 +49,6 @@ function showTask(idx){
         })
       }
     }
-    console.log(tasksToShow)
   let task = tasksToShow.slice(idx, idx + pagination);
   return task.map(item => (
           <div key={item.id}>
@@ -57,7 +57,7 @@ function showTask(idx){
             <p><small>Difficulty: {item.difficulty}</small></p>
             <div onClick={() => toggleComplete(item.id)}>Complete: {item.complete.toString()}</div>
             <hr />
-            <Button intent='success' text='Complete Task' onClick={() => toggleComplete(item.id)}></Button>
+            <Button intent='success' text='Complete Task' onClick={() => toggleComplete(item)}></Button>
             <Button intent='danger' text='X' onClick={() => deleteItem(item.id)}></Button>
            </div>
         ))
@@ -75,7 +75,13 @@ if(index === 0){
   if(index !== 0){
     setShowButtonLeft(false)
   }
+  console.log(index, list)
 }, [list, index])
+useEffect( async () => {
+  let recordedTasks = await axios.get("http://localhost:3001/api/v1/tasks");
+  console.log(recordedTasks.data)
+  setList(recordedTasks.data)
+}, [])
 
 function paginationAdd(){
   setIndex(index + pagination);

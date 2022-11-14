@@ -13,11 +13,9 @@ function ListContextProvider(props){
     useEffect(() => {
         let savedSettings = localStorage.getItem('settings');
         let parsedSettings = JSON.parse(savedSettings)
-        console.log(parsedSettings);
         setPagination(parsedSettings.pagination);
         setShowComplete(parsedSettings.showComplete);
         setSortA(parsedSettings.sortA)
-        console.log(showComplete)
     }, [])
     useEffect(() => {
         localStorage.setItem('settings', JSON.stringify({ pagination, sortA, showComplete }));
